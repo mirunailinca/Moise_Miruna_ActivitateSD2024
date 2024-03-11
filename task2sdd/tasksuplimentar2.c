@@ -17,7 +17,7 @@ void afiseazaMasina(struct Masina m) {
 	printf("\n");
 }
 
-struct Masina citireMasina(const char* nume, int km, int anFabricatie) {
+struct Masina citireMasina(const char* nume, int km, int anFabricatie) { 
 	struct Masina m;
 	m.nume = malloc(strlen(nume) + 1);
 	strcpy(m.nume, nume);
@@ -51,31 +51,53 @@ struct Masina comparatieAn(struct Masina m1, struct Masina m2) {
 		return m2;
 }
 
-struct Masina* creareVector(struct Masina* vm, int marime) { //vector cu masini mai noi de 2018
+void stergeMasina(struct Masina* m) {
+	if (m->nume != NULL)
+		free(m->nume);
+}
+
+void afisareVector(struct Masina* v, int nrMasini) {
+	for (int i = 0; i < nrMasini; i++)
+		afiseazaMasina(v[i]);
+}
+
+struct Masina* conditieAn(struct Masina* v, int nrMasini, int an, int* nrMasiniConditie) {
+	*nrMasiniConditie = 0;
+	int cnt = 0;
 	struct Masina* vectorNou;
-	int nr = 0, cont = 0;
-	for (int i = 0; i < marime; i++)
-		if (vm[i].anFabricatie >= 2018)
-			nr++;
-	vectorNou = (struct Masina*)malloc(sizeof(struct Masina) * nr);
-	for (int i = 0; i < nr; i++)
-	{
-		if (vm[i].anFabricatie >= 2018)
-		{
-			vectorNou[cont].nume = (char*)malloc(sizeof(vm[i].nume));
-			strcpy(vectorNou[cont].nume, vm[i].nume);
-			vectorNou[cont].km = vm[i].km;
-			vectorNou[cont].anFabricatie = vm[i].anFabricatie;
-			cont++;
-		}
-	}
+
+	for (int i = 0; i < nrMasini; i++)
+		if (v[i].anFabricatie > an) (*nrMasiniConditie)++;
+
+	vectorNou = (struct Masina*)malloc(sizeof(struct Masina) * (*nrMasiniConditie));
+
+	for (int i = 0; i < nrMasini; i++)
+		if (v[i].anFabricatie > an)
+			vectorNou[cnt++] = citireMasina(v[i].nume, v[i].km, v[i].anFabricatie);
 
 	return vectorNou;
 }
 
-void stergeMasina(struct Masina* m) {
-	if (m->nume != NULL)
-		free(m->nume);
+struct Masina* concatenareVectori(struct Masina* v1, struct Masina* v2, int nrMasini1, int nrMasini2) {
+	int cnt = 0;
+	struct Masina* vectorNou = (struct Masina*)malloc(sizeof(struct Masina) * (nrMasini1 + nrMasini2));
+
+	for(int i = 0; i < nrMasini1; i++)
+		vectorNou[cnt++]=citireMasina(v1[i].nume, v1[i].km, v1[i].anFabricatie);
+
+	for (int i = 0; i < nrMasini2; i++)
+		vectorNou[cnt++] = citireMasina(v2[i].nume, v2[i].km, v2[i].anFabricatie);
+
+	return vectorNou;
+}
+
+void dezalocareVectorMasini(struct Masina** v, int* nrMasini) {
+	for (int i = 0;i < *nrMasini;i++)
+		free((*v)[i].nume);
+
+	free(*v);
+	*nrMasini = 0;
+	*v = NULL;
 }
 
 int main() {
@@ -88,7 +110,7 @@ int main() {
 
 	struct Masina m2;
 	m2 = citireMasina("Sandero", 10000, 2022);
-	afiseazaMasina(m2);
+	//afiseazaMasina(m2);
 
 	modificareKm(&m2, 13013);
 	afiseazaMasina(m2);
@@ -100,44 +122,52 @@ int main() {
 	//afiseazaMasina(comparatieAn(m1, m2));
 
 	struct Masina m4, m3;
+
+	m3.nume = (char*)malloc(strlen("Cielo") + 1);
+	strcpy(m3.nume, "Cielo");
+	m3.km = 53400;
+	m3.anFabricatie = 2003;
+	afiseazaMasina(m3);
+
 	m4.nume = (char*)malloc(strlen("Papuc") + 1);
 	strcpy(m4.nume, "Papuc");
 	m4.km = 230000;
 	m4.anFabricatie = 1990;
-
-	m3.nume = (char*)malloc(strlen("Cielo") + 1);
-	strcpy(m3.nume, "Cielo");
-	m3.km = 23000;
-	m3.anFabricatie = 2018;
+	afiseazaMasina(m4);
 
 
-
-	/*struct Masina vmasini[4] ;
-	vmasini[0] = m1;
-	vmasini[1] = m2;
-	vmasini[2] = m3;
-	vmasini[3] = m4;
-
-	creareVector(vmasini, 4);*/
-
-	int nr;
-	printf("Introduceti numarul de masini: ");
-	scanf("%d", &nr);
-
-	struct Masina* vectorMasini;
-	vectorMasini = (struct Masina*)malloc(nr * sizeof(struct Masina));
+	int nrMasini = 4;
+	struct Masina* vectorMasini = (struct Masina*)malloc(sizeof(struct Masina) * nrMasini);
 
 	vectorMasini[0] = m1;
 	vectorMasini[1] = m2;
 	vectorMasini[2] = m3;
 	vectorMasini[3] = m4;
 
-	creareVector(vectorMasini, 4);
+	printf("----------------1-");
+
+	afisareVector(vectorMasini, nrMasini);
+
+
+	int nrMasiniConditie = 0;
+	struct Masina* vectorMasiniConditie = conditieAn(vectorMasini, nrMasini, 2010, &nrMasiniConditie);
+
+	printf("----------------2-");
+	afisareVector(vectorMasiniConditie, nrMasiniConditie);
+
+
+	struct Masini* vectorConcatenat = concatenareVectori(vectorMasini, vectorMasiniConditie, nrMasini, nrMasiniConditie);
+	printf("----------------3-");
+	afisareVector(vectorConcatenat, nrMasini+nrMasiniConditie);
 
 	free(m1.nume);
 	free(m2.nume);
 	free(m3.nume);
 	free(m4.nume);
 	//free(m5.nume);
+	int z = nrMasini + nrMasiniConditie;
+	dezalocareVectorMasini(&vectorConcatenat, &z);
+	dezalocareVectorMasini(&vectorMasini, &nrMasini);
+	dezalocareVectorMasini(&vectorMasiniConditie, &nrMasiniConditie);
 	return 0;
 }
