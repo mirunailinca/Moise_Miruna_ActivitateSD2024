@@ -2,117 +2,172 @@
 #include<stdio.h>
 #include<malloc.h>
 
-struct Farmacie {
-	int id;
+
+struct Masina {
 	char* nume;
-	float suprafata;
+	int km;
+	int anFabricatie;
 };
 
-struct Farmacie initializareFarmacie(int id, const char* nume, float suprafata)
-{
-	struct Farmacie f;
-	f.id = id;
-	f.nume = (char*)malloc(sizeof(char) * (strlen(nume) + 1));
-	strcpy(f.nume, nume);
-	f.suprafata = suprafata;
-
-	return f;
+void afiseazaMasina(struct Masina m) {
+	if (m.nume != NULL)
+		printf("\nNume: %s", m.nume);
+	printf("\nKm: %i", m.km);
+	printf("\nAn fabricatie: %i", m.anFabricatie);
+	printf("\n");
 }
 
-void afisareFarmacie(struct Farmacie farmacie) {
-	printf("%d. %s are o suprafata de %5.2f mp\n", farmacie.id, farmacie.nume, farmacie.suprafata);
+struct Masina citireMasina(const char* nume, int km, int anFabricatie) { 
+	struct Masina m;
+	m.nume = malloc(strlen(nume) + 1);
+	strcpy(m.nume, nume);
+	m.km = km;
+	m.anFabricatie = anFabricatie;
+	return m;
 }
 
-void afisareVector(struct Farmacie* farmacii, int nrFarmacii) {
-	//printf("%5.2f", (float)sizeof(farmacii) / (float)sizeof(struct Farmacie)); //nu merge sa sccriem asa la dinamic
-	for (int i = 0;i < nrFarmacii;i++) { 
-		afisareFarmacie(farmacii[i]);
-	}
+struct Masina citireMasinaTastatura() {
+	struct Masina m;
+
+	m.nume = (char*)malloc(100 * sizeof(char));
+	printf("\nIntroducti numele: ");
+	scanf("%s", m.nume);
+	printf("\nIntroduceti numarul de km: ");
+	scanf("%d", &m.km);
+	printf("\nIntroduceti anul fabricatiei: ");
+	scanf("%d", &m.anFabricatie);
+
+	return m;
 }
 
-struct Farmacie* copieazaNElemente(struct Farmacie* vector, int nrFarmacii, int n) { //n = nr elemente copiate
-	if (n <= nrFarmacii && n > 0) {
-		struct Farmacie* copiat = (struct Farmacie*)malloc(sizeof(struct Farmacie) * n);
-		for (int i = 0;i < n;i++)
-		{
-			copiat[i] = initializareFarmacie(vector[i].id, vector[i].nume, vector[i].suprafata);
-		}
-		return copiat;
-	}
+void modificareKm(struct Masina* m, int km) {
+	m->km = km;
+}
+
+struct Masina comparatieAn(struct Masina m1, struct Masina m2) {
+	if (m1.anFabricatie > m2.anFabricatie)
+		return m1;
 	else
-		return NULL;
-
+		return m2;
 }
 
-struct Farmacie* copiazaFarmaciiMici(struct Farmacie* farmacii, int nrFarmacii, float pragSuprafata, int* nrFarmaciiMici) {
-	*nrFarmaciiMici = 0;
-	for (int i = 0;i < nrFarmacii;i++)
-		if (farmacii[i].suprafata < pragSuprafata) (*nrFarmaciiMici)++;
-
-	struct Farmacie* vector = (struct Farmacie*)malloc(sizeof(struct Farmacie) * (*nrFarmaciiMici)); //derefe nrfarmmici pt ca e pointer
-	int k = 0;
-	for (int i = 0;i < nrFarmacii;i++)
-	{
-		if (farmacii[i].suprafata < pragSuprafata)
-			vector[k++] = initializareFarmacie(farmacii[i].id, farmacii[i].nume, farmacii[i].suprafata);
-	}
-	//ca sa dezaloc pozitiile in care nu am pus trec din nou prin for si dezaloc negatia conditiei cu &
-	return vector;
+void stergeMasina(struct Masina* m) {
+	if (m->nume != NULL)
+		free(m->nume);
 }
 
-void dezalocareVectorFarmacii(struct Farmacie** vector, int* nrFarmacii) //cu 2 ** pentru ca nu vrem sa avem dangling pointers
-{
-	for (int i = 0; i < *nrFarmacii;i++) {
-		free((*vector)[i].nume);
-	}
-	free(*vector);
-	*nrFarmacii = 0;
-	*vector = NULL;
+void afisareVector(struct Masina* v, int nrMasini) {
+	for (int i = 0; i < nrMasini; i++)
+		afiseazaMasina(v[i]);
 }
 
-struct Farmacie getFarmacieByID(struct Farmacie* vector, int nrFarmacii, int idCautat) {//cautam dupa id si returnam
-	for (int i = 0;i < nrFarmacii;i++) {
-		if (vector[i].id == idCautat)
-			return initializareFarmacie(vector[i].id, vector[i].nume, vector[i].suprafata);
-	}
-	return initializareFarmacie(0, "N\A", 0);
+struct Masina* conditieAn(struct Masina* v, int nrMasini, int an, int* nrMasiniConditie) {
+	*nrMasiniConditie = 0;
+	int cnt = 0;
+	struct Masina* vectorNou;
+
+	for (int i = 0; i < nrMasini; i++)
+		if (v[i].anFabricatie > an) (*nrMasiniConditie)++;
+
+	vectorNou = (struct Masina*)malloc(sizeof(struct Masina) * (*nrMasiniConditie));
+
+	for (int i = 0; i < nrMasini; i++)
+		if (v[i].anFabricatie > an)
+			vectorNou[cnt++] = citireMasina(v[i].nume, v[i].km, v[i].anFabricatie);
+
+	return vectorNou;
+}
+
+struct Masina* concatenareVectori(struct Masina* v1, struct Masina* v2, int nrMasini1, int nrMasini2) {
+	int cnt = 0;
+	struct Masina* vectorNou = (struct Masina*)malloc(sizeof(struct Masina) * (nrMasini1 + nrMasini2));
+
+	for(int i = 0; i < nrMasini1; i++)
+		vectorNou[cnt++]=citireMasina(v1[i].nume, v1[i].km, v1[i].anFabricatie);
+
+	for (int i = 0; i < nrMasini2; i++)
+		vectorNou[cnt++] = citireMasina(v2[i].nume, v2[i].km, v2[i].anFabricatie);
+
+	return vectorNou;
+}
+
+void dezalocareVectorMasini(struct Masina** v, int* nrMasini) {
+	for (int i = 0;i < *nrMasini;i++)
+		free((*v)[i].nume);
+
+	free(*v);
+	*nrMasini = 0;
+	*v = NULL;
 }
 
 int main() {
-	//un vector este o struct de date omogena, liniara, ocupa o zona de memorie contigua (ceea ce ne permite accesul)
-	//daca un vector e alocat static se afla in stiva
-	
-	int nrFarmacii = 4;
-	struct Farmacie* farmacii = (struct Farmacie*)malloc(sizeof(struct Farmacie) * nrFarmacii);
+	struct Masina m1;
+	m1.nume = (char*)malloc(strlen("Mazda") + 1);
+	strcpy(m1.nume, "Mazda");
+	m1.km = 23000;
+	m1.anFabricatie = 2018;
+	afiseazaMasina(m1);
 
-	for (int i = 0;i < nrFarmacii;i++) {
-		farmacii[i] = initializareFarmacie(i + 1, "Farmacie", 30 * i + 10);
+	struct Masina m2;
+	m2 = citireMasina("Sandero", 10000, 2022);
+	//afiseazaMasina(m2);
 
-	}
+	modificareKm(&m2, 13013);
+	afiseazaMasina(m2);
 
-	afisareVector(farmacii, nrFarmacii);
+	//struct Masina m5;
+	//m5 = citireMasinaTastatura();
+	//afiseazaMasina(m5);
 
-	int nrObiecteCopiate = 2;
+	//afiseazaMasina(comparatieAn(m1, m2));
 
-	struct Farmacie* farmaciiCopiate = copieazaNElemente(farmacii, nrFarmacii, nrObiecteCopiate);
+	struct Masina m4, m3;
 
-	printf("\n\n");
-	afisareVector(farmaciiCopiate, nrObiecteCopiate);
+	m3.nume = (char*)malloc(strlen("Cielo") + 1);
+	strcpy(m3.nume, "Cielo");
+	m3.km = 53400;
+	m3.anFabricatie = 2003;
+	afiseazaMasina(m3);
 
-	farmacii[3].suprafata = 20;
+	m4.nume = (char*)malloc(strlen("Papuc") + 1);
+	strcpy(m4.nume, "Papuc");
+	m4.km = 230000;
+	m4.anFabricatie = 1990;
+	afiseazaMasina(m4);
 
-	int nrFarmaciiMici = 0;
-	struct Farmacie* farmaciiMici = copiazaFarmaciiMici(farmacii, nrFarmacii, 50, &nrFarmaciiMici);
-	printf("\n\n");
-	afisareVector(farmaciiMici, nrFarmaciiMici);
 
-	struct Farmacie farmacieCautata = getFarmacieByID(farmacii, nrFarmacii, 9);
-	printf("\nFarmacie cautata: ");
-	afisareFarmacie(farmacieCautata);
-	free(farmacieCautata.nume);
+	int nrMasini = 4;
+	struct Masina* vectorMasini = (struct Masina*)malloc(sizeof(struct Masina) * nrMasini);
 
-	dezalocareVectorFarmacii(&farmacii, &nrFarmacii);
-	dezalocareVectorFarmacii(&farmaciiCopiate, &nrObiecteCopiate);
-	dezalocareVectorFarmacii(&farmaciiMici, &nrFarmaciiMici);
+	vectorMasini[0] = m1;
+	vectorMasini[1] = m2;
+	vectorMasini[2] = m3;
+	vectorMasini[3] = m4;
 
+	printf("----------------1-");
+
+	afisareVector(vectorMasini, nrMasini);
+
+
+	int nrMasiniConditie = 0;
+	struct Masina* vectorMasiniConditie = conditieAn(vectorMasini, nrMasini, 2010, &nrMasiniConditie);
+
+	printf("----------------2-");
+	afisareVector(vectorMasiniConditie, nrMasiniConditie);
+
+
+	struct Masini* vectorConcatenat = concatenareVectori(vectorMasini, vectorMasiniConditie, nrMasini, nrMasiniConditie);
+	printf("----------------3-");
+	afisareVector(vectorConcatenat, nrMasini+nrMasiniConditie);
+
+	free(m1.nume);
+	free(m2.nume);
+	free(m3.nume);
+	free(m4.nume);
+	//free(m5.nume);
+	int z = nrMasini + nrMasiniConditie;
+	dezalocareVectorMasini(&vectorConcatenat, &z);
+	dezalocareVectorMasini(&vectorMasini, &nrMasini);
+	dezalocareVectorMasini(&vectorMasiniConditie, &nrMasiniConditie);
+	return 0;
 }
