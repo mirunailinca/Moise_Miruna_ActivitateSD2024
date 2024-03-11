@@ -1,0 +1,9 @@
+﻿  tasksuplimentar.c
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(22,18): warning C4013: 'strlen' undefined; assuming extern returning int
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(23,2): warning C4013: 'strcpy' undefined; assuming extern returning int
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(122,19): warning C4013: 'strtok' undefined; assuming extern returning int
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(128,37): warning C4047: '=': 'char *' differs in levels of indirection from 'int'
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(129,10): warning C4013: 'atoi' undefined; assuming extern returning int
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(130,37): warning C4047: '=': 'char *' differs in levels of indirection from 'int'
+C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\tasksuplimentar.c(122,9): warning C4047: 'initializing': 'char *' differs in levels of indirection from 'int'
+  Project1.vcxproj -> C:\Users\Miruna Faraon\Downloads\Desktop\facultate frate\an 2\sem2\sdd\visual-proiecte\task3-sdd\Project1\x64\Debug\Project1.exe
