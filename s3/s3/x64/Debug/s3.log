@@ -1,4 +1,0 @@
-﻿  FileName.c
-C:\Users\stud\Desktop\seminar3-sdd\s3\s3\FileName.c(48,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\stud\Desktop\seminar3-sdd\s3\s3\FileName.c(95,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  s3.vcxproj -> C:\Users\stud\Desktop\seminar3-sdd\s3\x64\Debug\s3.exe
