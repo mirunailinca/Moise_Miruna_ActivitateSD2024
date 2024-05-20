@@ -1,0 +1,4 @@
+﻿  Source.c
+C:\VS-projects\task11-sdd\Source.c(153,45): warning C4013: 'strlen' undefined; assuming extern returning int
+C:\VS-projects\task11-sdd\Source.c(154,2): warning C4013: 'strcpy' undefined; assuming extern returning int
+  task11-sdd.vcxproj -> C:\VS-projects\task11-sdd\x64\Debug\task11-sdd.exe
